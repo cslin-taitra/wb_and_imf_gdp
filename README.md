@@ -1,4 +1,3 @@
-# wb_and_imf_gdp
 # GDP data from World Bank and IMF
 
 prerequisite:
