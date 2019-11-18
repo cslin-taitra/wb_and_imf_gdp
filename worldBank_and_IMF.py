@@ -1,6 +1,11 @@
+# !pip install wbdatab
+
 import pandas as pd
 import wbdata as wb
 
+# WorldBank資料來源
+## http://blogs.worldbank.org/opendata/new-country-classifications-income-level-2017-2018
+    
 ## 國家資料，收入水平
 countries = wb.get_country(display=False)  
 df_country = pd.DataFrame(countries)
@@ -65,8 +70,8 @@ df_wb_mg = df_country[['id','incomeLevel','iso2Code','name']].merge(
         left_on='iso2Code', right_on='iso2Code', how='left', suffixes=['_per_capita','_per_capita_growth'])
         
 # IMF 資料來源
-https://www.imf.org/external/pubs/ft/weo/2019/02/weodata/download.aspx
-https://www.imf.org/external/pubs/ft/weo/2019/02/weodata/WEOOct2019all.xls
+## https://www.imf.org/external/pubs/ft/weo/2019/02/weodata/download.aspx
+## https://www.imf.org/external/pubs/ft/weo/2019/02/weodata/WEOOct2019all.xls
 
 df_imf = pd.read_csv(
     'https://www.imf.org/external/pubs/ft/weo/2019/02/weodata/WEOOct2019all.xls',
@@ -80,6 +85,8 @@ df_imf_mg = df_imf[
     (df_imf['WEO Subject Code'] == 'NGDPD')].iloc[:,keys]
 df_imf_mg[df_imf_mg.ISO=='TWN']
 
+
+# 存為 Excel 檔案
 df_wb_mg.merge(df_imf_mg.iloc[:,[1,9,10,6,7]],
               right_on = 'ISO', 
               left_on = 'id').to_excel('Country_from_WB_IMF.xlsx', index=False)
