@@ -78,15 +78,35 @@ df_imf = pd.read_csv(
     sep='\t',
  encoding='latin-1')
 
-keys = [i for i in range(0,9)] + [i for i in range(47,55)]
+keys = [1,48,49]
 
-df_imf_mg = df_imf[
-    (df_imf.Units == 'U.S. dollars') &
+# NGDPD: Gross domestic product, current prices / U.S. dollars
+# NGDPDPC: Gross domestic product per capita, current prices / U.S. dollars
+# NGDP_RPCH: Gross domestic product, constant prices / Percent change
+
+## 未使用
+# NGDP_R: Gross domestic product, constant prices / National currency
+# NGDPRPC: Gross domestic product per capita, constant prices / National currency
+
+df_imf_mg_NGDPD = df_imf[
     (df_imf['WEO Subject Code'] == 'NGDPD')].iloc[:,keys]
-df_imf_mg[df_imf_mg.ISO=='TWN']
 
+df_imf_mg_NGDPDPC = df_imf[
+    (df_imf['WEO Subject Code'] == 'NGDPDPC')].iloc[:,keys]
 
-# 存為 Excel 檔案
-df_wb_mg.merge(df_imf_mg.iloc[:,[1,9,10,6,7]],
+df_imf_mg_NGDP_RPCH = df_imf[
+    (df_imf['WEO Subject Code'] == 'NGDP_RPCH')].iloc[:,keys]
+
+df_imf_mg = df_imf_mg_NGDPD.merge(
+    df_imf_mg_NGDPDPC, left_on = 'ISO', right_on = 'ISO', suffixes=['_GDP','_GDP_PER_CAPITA']
+).merge(
+    df_imf_mg_NGDP_RPCH, left_on = 'ISO', right_on = 'ISO' )
+
+df_imf_mg.columns = ['ISO', '2019_GDP', '2020_GDP', '2019_GDP_PER_CAPITA', '2020_GDP_PER_CAPITA', '2019_GDP_Change', '2020_GDP_Change']
+
+df_wb_mg.merge(df_imf_mg,
+              right_on = 'ISO', 
+              left_on = 'id').head(10)
+df_wb_mg.merge(df_imf_mg,
               right_on = 'ISO', 
               left_on = 'id').to_excel('Country_from_WB_IMF.xlsx', index=False)
