@@ -1,4 +1,4 @@
-# !pip install wbdatab
+# !pip install wbdata
 
 import pandas as pd
 import wbdata as wb
